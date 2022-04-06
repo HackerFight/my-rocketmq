@@ -1,5 +1,6 @@
 package com.qiuguan.rocketmq.general;
 
+import com.qiuguan.rocketmq.util.MQConstant;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
@@ -17,12 +18,12 @@ public class SyncProducer {
         System.out.println(Runtime.getRuntime().availableProcessors());
 
         DefaultMQProducer producer = new DefaultMQProducer("qiuguan_group");
-        producer.setNamesrvAddr("47.96.111.179:9876");
+        producer.setNamesrvAddr(MQConstant.NAME_SERVER_ADDR);
         producer.start();
 
         for (int i = 0; i < 1 ; i++) {
-            byte[] body = ("hi:" + i).getBytes();
-            Message message = new Message("qiuguan_topic", "qiuguan_tag", body);
+            byte[] body = ("hi qiuguan, welcome to china:" + i).getBytes();
+            Message message = new Message("qiuguan_topic_2", "qiuguan_tag", body);
             SendResult send = producer.send(message, 10000);
             System.out.println("sendResult: " + send);
         }
