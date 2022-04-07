@@ -2,16 +2,18 @@ package com.qiuguan.rocketmq.general;
 
 import com.qiuguan.rocketmq.util.MQConstant;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author qiuguan
- * @version SyncProducer.java, v 0.1 2022/03/25  18:03:24 qiuguan Exp $
- * 同步发送消息
+ * @version AsyncProducer.java, v 0.1 2022/03/25  18:03:24 qiuguan Exp $
+ * 异步发送消息
  *
  * <p>
  *     public enum SendStatus {
@@ -29,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * </p>
  */
-public class SyncProducer {
+public class AsyncProducer {
 
     public static void main(String[] args) throws Exception {
 
@@ -37,27 +39,42 @@ public class SyncProducer {
         DefaultMQProducer producer = new DefaultMQProducer(MQConstant.DEFAULT_PRODUCER_GROUP_NAME);
         // 设置NameServer的地址
         producer.setNamesrvAddr(MQConstant.NAME_SERVER_ADDR);
-        // 设置当发送失败时重试发送的次数，默认为2次
-        producer.setRetryTimesWhenSendFailed(3);
-        // 设置发送超时时限为5s，默认3s
-        producer.setSendMsgTimeout(5000);
+        // 设置当发送失败时不进行重试发送
+        producer.setRetryTimesWhenSendAsyncFailed(0);
+        // 设置新创建的topic的queue的数量，默认是4个
+        producer.setDefaultTopicQueueNums(2);
 
 
         // 启动Producer实例
         producer.start();
         for (int i = 0; i < 10; i++) {
             // 创建消息，并指定Topic，Tag和消息体
-            Message msg = new Message(MQConstant.GENERAL_SYNC_TOPIC,
+            Message msg = new Message(MQConstant.GENERAL_ASYNC_TOPIC,
                     "*",
                     ("Hello RocketMQ, producer is qiuguan " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );
+
             // 为消息指定key
             int keyRandom = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE - 1);
             msg.setKeys("key-unique-" + keyRandom);
-            SendResult sendResult = producer.send(msg);
-            // 通过sendResult返回消息是否成功送达
-            System.out.printf("%s%s%n", sendResult, keyRandom);
+
+            producer.send(msg, new SendCallback() {
+                @Override
+                public void onSuccess(SendResult sendResult) {
+                    System.out.println("sendResult : " + sendResult);
+                }
+
+                @Override
+                public void onException(Throwable e) {
+                    e.printStackTrace();
+                }
+            });
         }
+
+        // sleep一会儿，由于采用的是异步发送，所以若这里不sleep，
+        // 则消息还未发送就会将producer给关闭，报错
+        TimeUnit.SECONDS.sleep(30);
+
         // 如果不再发送消息，关闭Producer实例。
         producer.shutdown();
     }

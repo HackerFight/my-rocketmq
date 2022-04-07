@@ -10,8 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author qiuguan
- * @version SyncProducer.java, v 0.1 2022/03/25  18:03:24 qiuguan Exp $
- * 同步发送消息
+ * @version OnewayProducer.java, v 0.1 2022/03/25  18:03:24 qiuguan Exp $
+ * 单向发送消息
  *
  * <p>
  *     public enum SendStatus {
@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * </p>
  */
-public class SyncProducer {
+public class OnewayProducer {
 
     public static void main(String[] args) throws Exception {
 
@@ -37,27 +37,25 @@ public class SyncProducer {
         DefaultMQProducer producer = new DefaultMQProducer(MQConstant.DEFAULT_PRODUCER_GROUP_NAME);
         // 设置NameServer的地址
         producer.setNamesrvAddr(MQConstant.NAME_SERVER_ADDR);
-        // 设置当发送失败时重试发送的次数，默认为2次
-        producer.setRetryTimesWhenSendFailed(3);
-        // 设置发送超时时限为5s，默认3s
-        producer.setSendMsgTimeout(5000);
 
 
         // 启动Producer实例
         producer.start();
         for (int i = 0; i < 10; i++) {
             // 创建消息，并指定Topic，Tag和消息体
-            Message msg = new Message(MQConstant.GENERAL_SYNC_TOPIC,
+            Message msg = new Message(MQConstant.GENERAL_ONE_WAY_TOPIC,
                     "*",
                     ("Hello RocketMQ, producer is qiuguan " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );
             // 为消息指定key
             int keyRandom = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE - 1);
             msg.setKeys("key-unique-" + keyRandom);
-            SendResult sendResult = producer.send(msg);
-            // 通过sendResult返回消息是否成功送达
-            System.out.printf("%s%s%n", sendResult, keyRandom);
+
+            //发送单向消息
+            producer.sendOneway(msg);
         }
+
+
         // 如果不再发送消息，关闭Producer实例。
         producer.shutdown();
     }

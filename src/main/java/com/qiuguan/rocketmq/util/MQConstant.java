@@ -7,4 +7,12 @@ package com.qiuguan.rocketmq.util;
 public abstract class MQConstant {
 
     public static final String NAME_SERVER_ADDR = "47.96.111.179:9876";
+
+    public static final String DEFAULT_PRODUCER_GROUP_NAME = "zhangxinyu-group";
+
+    public static final String GENERAL_SYNC_TOPIC = "general_sync_topic";
+
+    public static final String GENERAL_ASYNC_TOPIC = "general_async_topic";
+
+    public static final String GENERAL_ONE_WAY_TOPIC = "general_one_way_topic";
 }
