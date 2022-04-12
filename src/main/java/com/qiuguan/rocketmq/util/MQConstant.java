@@ -21,4 +21,8 @@ public abstract class MQConstant {
     public static final String DELAY_TOPIC = "delay_test_20220409_topic";
 
     public static final String BATCH_TOPIC = "batch_topic";
+
+    public static final String FILTER_TAG_TOPIC = "filter_by_tag_topic";
+
+    public static final String FILTER_SQL_TOPIC = "filter_by_sql_test_topic";
 }
