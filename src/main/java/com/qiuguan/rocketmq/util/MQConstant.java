@@ -19,4 +19,6 @@ public abstract class MQConstant {
     public static final String ORDERED_TOPIC = "ordered_topic";
 
     public static final String DELAY_TOPIC = "delay_test_20220409_topic";
+
+    public static final String BATCH_TOPIC = "batch_topic";
 }
