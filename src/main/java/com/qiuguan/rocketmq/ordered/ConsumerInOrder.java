@@ -2,9 +2,7 @@ package com.qiuguan.rocketmq.ordered;
 
 import com.qiuguan.rocketmq.util.MQConstant;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
-import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
+import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
 
@@ -30,6 +28,11 @@ public class ConsumerInOrder {
 
        consumer.subscribe(ORDERED_TOPIC, "TagA || TagC || TagD");
 
+       /**
+        * @see MessageListener
+        * @see MessageListenerOrderly   --- 监听顺序消息
+        * @see MessageListenerConcurrently   --- 监听其他消息
+        */
        consumer.registerMessageListener(new MessageListenerOrderly() {
 
            Random random = new Random();
