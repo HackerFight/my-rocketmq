@@ -27,4 +27,6 @@ public abstract class MQConstant {
     public static final String FILTER_SQL_TOPIC = "filter_by_sql_test_topic";
 
     public static final String RETRY_TOPIC = "retry_topic";
+
+    public static final String TX_TOPIC = "tx_topic";
 }
