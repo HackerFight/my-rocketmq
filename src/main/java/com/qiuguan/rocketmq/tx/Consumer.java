@@ -10,6 +10,12 @@ import org.apache.rocketmq.common.message.MessageExt;
 
 import java.util.List;
 
+/**
+ * tagA --> COMMIT_MESSAGE, 会被消费
+ * tagB --> ROLLBACK_MESSAGE, 回滚了，不会消费
+ * tagC --> 回查后COMMIT_MESSAGE, 也会被消费
+ * 所以可以消费2条消息
+ */
 public class Consumer {
 
 	public static void main(String[] args) throws InterruptedException, MQClientException {
@@ -19,7 +25,7 @@ public class Consumer {
     	// 设置NameServer的地址
         consumer.setNamesrvAddr(MQConstant.NAME_SERVER_ADDR);
 
-        consumer.subscribe(MQConstant.TX_TOPIC, "*");
+        consumer.subscribe(MQConstant.TX_TOPIC, "tagA || tagB || tagC");
     	// 注册回调实现类来处理从broker拉取回来的消息
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override

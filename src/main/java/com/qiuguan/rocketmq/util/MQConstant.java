@@ -28,5 +28,5 @@ public abstract class MQConstant {
 
     public static final String RETRY_TOPIC = "retry_topic";
 
-    public static final String TX_TOPIC = "tx_topic";
+    public static final String TX_TOPIC = "tx_topic_test";
 }
