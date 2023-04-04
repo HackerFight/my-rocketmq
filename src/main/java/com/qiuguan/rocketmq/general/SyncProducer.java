@@ -6,8 +6,6 @@ import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * @author qiuguan
  * @version SyncProducer.java, v 0.1 2022/03/25  18:03:24 qiuguan Exp $
@@ -31,33 +29,36 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class SyncProducer {
 
+
     public static void main(String[] args) throws Exception {
 
         // 实例化消息生产者Producer
-        DefaultMQProducer producer = new DefaultMQProducer(MQConstant.DEFAULT_PRODUCER_GROUP_NAME);
+        DefaultMQProducer producer = new DefaultMQProducer("qiuguan-p-group");
         // 设置NameServer的地址
-        producer.setNamesrvAddr(MQConstant.NAME_SERVER_ADDR);
-        // 设置当发送失败时重试发送的次数，默认为2次
-        producer.setRetryTimesWhenSendFailed(3);
-        // 设置发送超时时限为5s，默认3s
-        producer.setSendMsgTimeout(5000);
-
+        producer.setNamesrvAddr("127.0.0.1:9876");
+        //producer.setSendLatencyFaultEnable(true);
+        producer.setDefaultTopicQueueNums(1);
 
         // 启动Producer实例
         producer.start();
-        for (int i = 0; i < 10; i++) {
+
+        for (int i = 1; i <= 1; i++) {
             // 创建消息，并指定Topic，Tag和消息体
-            Message msg = new Message(MQConstant.GENERAL_SYNC_TOPIC,
+            Message msg = new Message(MQConstant.DEBUG_TEST_TOPIC,
                     "*",
-                    ("Hello RocketMQ, producer is qiuguan " + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
+                    ("Hello RocketMQ-" + i).getBytes(RemotingHelper.DEFAULT_CHARSET)
             );
-            // 为消息指定key
-            int keyRandom = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE - 1);
-            msg.setKeys("key-unique-" + keyRandom);
+            //指定消息key, 消费者可以根据key做幂等消费
+            msg.setKeys("key-unique-" + i);
+
+            //同步发送
             SendResult sendResult = producer.send(msg);
+
             // 通过sendResult返回消息是否成功送达
-            System.out.printf("%s%s%n", sendResult, keyRandom);
+            System.out.printf("%s%s%n", sendResult, i);
         }
+
+
         // 如果不再发送消息，关闭Producer实例。
         producer.shutdown();
     }

@@ -8,6 +8,8 @@ public abstract class MQConstant {
 
     public static final String NAME_SERVER_ADDR = "47.96.111.179:9876";
 
+    public static final String NAME_SERVER_ADDR_LOCAL = "127.0.0.1:9876";
+
     public static final String DEFAULT_PRODUCER_GROUP_NAME = "zhangxinyu-group";
 
     public static final String GENERAL_SYNC_TOPIC = "general_sync_topic";
@@ -29,4 +31,6 @@ public abstract class MQConstant {
     public static final String RETRY_TOPIC = "retry_topic";
 
     public static final String TX_TOPIC = "tx_topic_test";
+
+    public static final String DEBUG_TEST_TOPIC = "offset-init-broker-topic";
 }
